@@ -1,73 +1,84 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class PhysicsManager: MonoBehaviour
+public class PhysicsManager : MonoBehaviour
 {
     public float mass = 0.045f;
     public float radius = 0.021f;
     public float gravity = 9.81f;
     public float rollingFriction = 0.4f;
     public float restitution = 0.8f;
-    public float minBounceSpeed;
+    public float minBounceSpeed = 0.1f;
 
     public Vector3 velocity;
     public Vector3 acceleration;
 
     public LayerMask groundLayer;
 
-    private bool wasGrounded = false;
+    public bool grounded = false;
 
-    void Update()
+    void FixedUpdate()
     {
-        // Aplicar fuerzas
         ApplyGravity();
         ApplyRollingResistance();
 
-        // Integrar movimiento
-        velocity += acceleration * Time.deltaTime;
-        transform.position += velocity * Time.deltaTime;
+        velocity += acceleration * Time.fixedDeltaTime;
+        Vector3 displacement = velocity * Time.fixedDeltaTime;
 
-        // Detectar colisión
-        bool groundedNow = IsGrounded();
+        RaycastHit hit;
+        bool hitDetected = false;
 
-        if (groundedNow)
+        if (displacement.magnitude > 0.001f)
         {
-            // Siempre recolocar encima del suelo
-            transform.position = new Vector3(transform.position.x, GetGroundY() + radius, transform.position.z);
+            hitDetected = Physics.SphereCast(transform.position, radius, displacement.normalized, out hit, displacement.magnitude, groundLayer);
+        }
+        else
+        {
+            // Verificar colisión incluso si la pelota no se mueve
+            hitDetected = Physics.SphereCast(transform.position, radius, Vector3.down, out hit, 0.05f, groundLayer);
+        }
 
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, Vector3.down, out hit, 2f, groundLayer))
+        if (hitDetected)
+        {
+            transform.position = hit.point + hit.normal * radius;
+            Vector3 normal = hit.normal;
+
+            if (velocity.magnitude > minBounceSpeed)
             {
-                Vector3 normal = hit.normal;
-
-                if (!wasGrounded && velocity.magnitude > minBounceSpeed)
-                {
-                    velocity = Vector3.Reflect(velocity, normal) * restitution;
-                }
-                else
-                {
-                    velocity = Vector3.zero;
-                    acceleration = Vector3.zero;
-                }
+                velocity = Vector3.Reflect(velocity, normal) * restitution;
             }
             else
             {
-                // Parar si el rebote es muy débil
-                velocity.y = 0f;
-                acceleration.y = 0f;
+                velocity -= Vector3.Project(velocity, normal);
+                acceleration -= Vector3.Project(acceleration, normal);
+
+                Vector3 gravityForce = Vector3.down * gravity;
+                Vector3 slopeForce = gravityForce - Vector3.Dot(gravityForce, normal) * normal;
+
+                if (slopeForce.magnitude < 0.01f)
+                {
+                    velocity = Vector3.zero;
+                    acceleration = Vector3.zero;
+                    grounded = true;
+                }
+                else
+                {
+                    acceleration += slopeForce;
+                }
             }
         }
+        else if(!grounded)
+        {
+            transform.position += displacement;
+        }
 
-        wasGrounded = groundedNow;
 
-        // Resetear aceleración
         acceleration = Vector3.zero;
     }
 
     void ApplyGravity()
     {
-        acceleration += Vector3.down * gravity;
+        if (!grounded)
+            acceleration += Vector3.down * gravity;
     }
 
     void ApplyRollingResistance()
@@ -77,21 +88,5 @@ public class PhysicsManager: MonoBehaviour
             Vector3 friction = -velocity.normalized * rollingFriction * gravity;
             acceleration += friction;
         }
-    }
-
-    bool IsGrounded()
-    {
-        RaycastHit hit;
-        return Physics.Raycast(transform.position, Vector3.down, out hit, radius + 0.05f, groundLayer);
-    }
-
-    float GetGroundY()
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 2f, groundLayer))
-        {
-            return hit.point.y;
-        }
-        return transform.position.y;
     }
 }
