@@ -143,6 +143,5 @@ public class PhysicsManager : MonoBehaviour
 
         velocity += impulseVelocity;
 
-        grounded = false;
     }
 }
