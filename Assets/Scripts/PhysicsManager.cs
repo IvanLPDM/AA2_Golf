@@ -8,6 +8,7 @@ public class PhysicsManager : MonoBehaviour
     public float rollingFriction = 0.4f;
     public float restitution = 0.8f;
     public float minBounceSpeed = 0.1f;
+    public AudioSource source;
 
     private Vector3 checkpoint;
 
@@ -24,6 +25,10 @@ public class PhysicsManager : MonoBehaviour
     public bool hit_Ball;
     public float force_hit;
     private bool deslizar = false;
+
+    public bool isOnIce = false;
+    public float groundResitance;
+    public float iceResistance;
 
     public GameObject canvas;
 
@@ -47,7 +52,7 @@ public class PhysicsManager : MonoBehaviour
 
         if(Input.GetKeyDown("escape"))
         {
-            Canvas canvas_ =canvas.GetComponent<Canvas>();
+            Canvas_Script canvas_ =canvas.GetComponent<Canvas_Script>();
             canvas_.Active();
         }
     }
@@ -65,7 +70,7 @@ public class PhysicsManager : MonoBehaviour
 
         
 
-            if (hit_Ball)
+        if (hit_Ball)
         {
             HitBall(directionHit, force_hit);
             hit_Ball = false;
@@ -83,19 +88,25 @@ public class PhysicsManager : MonoBehaviour
 
         if (hitDetected)
         {
+            
             transform.position = hit.point + hit.normal * radius;
             normal = hit.normal;
+
+            isOnIce = hit.collider.CompareTag("Ice");
+
+            
 
             if (velocity.magnitude > minBounceSpeed)
             {
                 velocity = Vector3.Reflect(velocity, normal) * restitution;
+                source.Play();
             }
             else // la pelota no rebota y se queda en el suelo
             {
                 deslizar = true;   
             }
 
-
+            
         }
         else
         {
@@ -119,6 +130,13 @@ public class PhysicsManager : MonoBehaviour
             // Aplicar fricción de rodadura solo si hay movimiento tangencial
             if (tangentialVelocity.magnitude > 0.01f)
             {
+                if (isOnIce)
+                {
+                    rollingFriction = iceResistance;
+                }
+                else
+                    rollingFriction = groundResitance;
+
                 Vector3 frictionDir = -tangentialVelocity.normalized;
                 float normalForce = mass * gravity * Vector3.Dot(normal, Vector3.up);
                 Vector3 friction = frictionDir * rollingFriction * normalForce / mass;
