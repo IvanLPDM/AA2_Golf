@@ -47,7 +47,7 @@ public class PhysicsManager : MonoBehaviour
 
         if(Input.GetKeyDown("escape"))
         {
-            Canvas canvas_ =canvas.GetComponent<Canvas>();
+            Canvas_Script canvas_ =canvas.GetComponent<Canvas_Script>();
             canvas_.Active();
         }
     }

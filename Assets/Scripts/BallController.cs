@@ -121,11 +121,11 @@ public class BallController : MonoBehaviour
                         break;
 
                     case Force.GREEN:
-                        direction.y *= 1;
+                        direction.y *= 0.2f;
                         break;
 
                     case Force.BLUE:
-                        direction.y *= 1.5f;
+                        direction.y *= 1f;
                         break;
 
                     default:

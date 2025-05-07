@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2814841388072012504}
-  - component: {fileID: 7870554983087427893}
   - component: {fileID: 3465305909085393027}
   - component: {fileID: 4301655359407882287}
   m_Layer: 6
@@ -27,26 +26,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1552191045860638715}
   m_LocalRotation: {x: 0.5, y: 0.5000005, z: 0.4999995, w: 0.50000006}
-  m_LocalPosition: {x: 0.004, y: 0.092, z: -0.029}
+  m_LocalPosition: {x: 0.004, y: -0.007, z: -0.003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7900196742678709461}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 90}
---- !u!65 &7870554983087427893
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1552191045860638715}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.43678364, y: 1, z: 1}
-  m_Center: {x: -0.2816101, y: 0, z: 0}
 --- !u!114 &3465305909085393027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,6 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec457dd4ab3c9d14189ee971f3625841, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ball: {fileID: 0}
+  triggerRadius: 0.5
+  canvas: {fileID: 0}
+  clip: {fileID: 8300000, guid: 1cf9077d09dd441468d27a2014774de2, type: 3}
 --- !u!82 &4301655359407882287
 AudioSource:
   m_ObjectHideFlags: 0
