@@ -25,6 +25,8 @@ public class PhysicsManager : MonoBehaviour
     public float force_hit;
     private bool deslizar = false;
 
+    public GameObject canvas;
+
     private void Start()
     {
         checkpoint = transform.position;
@@ -41,6 +43,12 @@ public class PhysicsManager : MonoBehaviour
         if (transform.position.y <= -10)
         {
             ResetBall();
+        }
+
+        if(Input.GetKeyDown("escape"))
+        {
+            Canvas canvas_ =canvas.GetComponent<Canvas>();
+            canvas_.Active();
         }
     }
 
