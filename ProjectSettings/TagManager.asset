@@ -6,6 +6,7 @@ TagManager:
   tags:
   - stick
   - Ball
+  - Ice
   layers:
   - Default
   - TransparentFX
@@ -14,7 +15,7 @@ TagManager:
   - Water
   - UI
   - ground
-  - 
+  - Ice
   - 
   - 
   - 

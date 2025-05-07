@@ -56,38 +56,45 @@ public class BallController : MonoBehaviour
             force = Force.GREEN;
         }
 
+        PhysicsManager PM;
+        PM = ball.GetComponent<PhysicsManager>();
 
-        if (Input.GetMouseButtonDown(0))
+        if (PM.velocity == Vector3.zero)
         {
-            dragging = true;
-            stick.SetActive(true);
-            startMouseY = Input.mousePosition.y;
-            currentRotation = 0f;
+            if (Input.GetMouseButtonDown(0))
+            {
+                dragging = true;
+                stick.SetActive(true);
+                startMouseY = Input.mousePosition.y;
+                currentRotation = 0f;
 
-            Vector3 directionFromCamera = (ball.position - Camera.main.transform.position).normalized;
+                Vector3 directionFromCamera = (ball.position - Camera.main.transform.position).normalized;
 
-            stick.transform.position = ball.position + directionFromCamera * 0.3f;
-            stick.transform.position += new Vector3(0, 3.8f, 0);
-            stick.transform.LookAt(ball.position);
+                stick.transform.position = ball.position + directionFromCamera * 0.3f;
+                stick.transform.position += new Vector3(0, 3.8f, 0);
+                stick.transform.LookAt(ball.position);
 
-            initialRotation = stick.transform.rotation;
-            lastPosition = stickTransform.position; // inicializar al empezar
+                initialRotation = stick.transform.rotation;
+                lastPosition = stickTransform.position; // inicializar al empezar
+            }
+
+            if (Input.GetMouseButton(0) && dragging)
+            {
+                float deltaY = Input.mousePosition.y - startMouseY;
+                float rotationAmount = Mathf.Clamp(deltaY * sensitivity, minRotation, maxRotation);
+                currentRotation = rotationAmount;
+
+                stick.transform.rotation = initialRotation * Quaternion.Euler(rotationAmount, 0, 0);
+            }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                dragging = false;
+                stick.SetActive(false);
+            }
         }
 
-        if (Input.GetMouseButton(0) && dragging)
-        {
-            float deltaY = Input.mousePosition.y - startMouseY;
-            float rotationAmount = Mathf.Clamp(deltaY * sensitivity, minRotation, maxRotation);
-            currentRotation = rotationAmount;
-
-            stick.transform.rotation = initialRotation * Quaternion.Euler(rotationAmount, 0, 0);
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            dragging = false;
-            stick.SetActive(false);
-        }
+        
 
         if (ball != null && dragging)
         {
@@ -121,7 +128,7 @@ public class BallController : MonoBehaviour
                         break;
 
                     case Force.GREEN:
-                        direction.y *= 0.2f;
+                        direction.y *= 0.4f;
                         break;
 
                     case Force.BLUE:
