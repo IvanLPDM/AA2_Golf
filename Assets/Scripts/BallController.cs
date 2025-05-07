@@ -134,7 +134,7 @@ public class BallController : MonoBehaviour
 
                 
 
-                ball.GetComponent<PhysicsManager>()?.HitBall(direction, velocity * 8);
+                ball.GetComponent<PhysicsManager>()?.HitBall(direction, velocity * 2);
                 audio.Play();
             }
 
