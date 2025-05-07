@@ -9,6 +9,8 @@ public class PhysicsManager : MonoBehaviour
     public float restitution = 0.8f;
     public float minBounceSpeed = 0.1f;
 
+    private Vector3 checkpoint;
+
     public Vector3 velocity;
     public Vector3 acceleration;
 
@@ -23,6 +25,33 @@ public class PhysicsManager : MonoBehaviour
     public float force_hit;
     private bool deslizar = false;
 
+    public GameObject canvas;
+
+    private void Start()
+    {
+        checkpoint = transform.position;
+    }
+
+    private void Update()
+    {
+        //Reset
+        if (Input.GetKeyDown("r"))
+        {
+            ResetBall();
+        }
+
+        if (transform.position.y <= -10)
+        {
+            ResetBall();
+        }
+
+        if(Input.GetKeyDown("escape"))
+        {
+            Canvas canvas_ =canvas.GetComponent<Canvas>();
+            canvas_.Active();
+        }
+    }
+
     void FixedUpdate()
     {
         ApplyGravity();
@@ -34,7 +63,9 @@ public class PhysicsManager : MonoBehaviour
         RaycastHit hit;
         bool hitDetected = false;
 
-        if(hit_Ball)
+        
+
+            if (hit_Ball)
         {
             HitBall(directionHit, force_hit);
             hit_Ball = false;
@@ -107,6 +138,7 @@ public class PhysicsManager : MonoBehaviour
                 velocity = Vector3.zero;
                 acceleration = Vector3.zero;
                 deslizar = false;
+                checkpoint = transform.position;
                 return;
             }
 
@@ -143,6 +175,13 @@ public class PhysicsManager : MonoBehaviour
 
         velocity += impulseVelocity;
 
-        grounded = false;
+    }
+    public void ResetBall()
+    {
+        velocity = Vector3.zero;
+        acceleration = Vector3.zero;
+        deslizar = false;
+        transform.position = checkpoint;
+        grounded = true;
     }
 }
